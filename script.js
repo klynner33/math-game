@@ -1,54 +1,49 @@
 class AdditionGame {
-  constructor() {
-      this.num1Element = document.getElementById('num1');
-      this.num2Element = document.getElementById('num2');
-      this.questionElement = document.getElementById('question');
-      this.answerElement = document.getElementById('answer');
-      this.resultElement = document.getElementById('result');
+constructor() {
+  this.num1Element = document.querySelector('#first-number');
+  this.num2Element = document.querySelector('#second-number');
+  this.answerElement = document.querySelector('#answer');
+  this.resultElement =document.querySelector('#result');
+}
 
-      this.generateQuestion();
-  }
+generateQuestion() {
+  this.num1 = Math.floor(Math.random() * 10);
+  this.num2 = Math.floor(Math.random() * 10);
 
-  generateQuestion() {
-      this.num1 = Math.floor(Math.random() * 10);
-      this.num2 = Math.floor(Math.random() * 10);
+  this.num2Element.textContent = this.num2;
+  this.num1Element.textContent = this.num1;
 
-      this.num1Element.textContent = this.num1;
-      this.num2Element.textContent = this.num2;
-      this.answerElement.value = '';
+  this.answerElement.focus();
+  this.answerElement.value = '';
+  this.resultElement.textContent = '';
+}
 
-      this.resultElement.textContent = '';
-  }
-
-  checkAnswer() {
-      const userAnswer = parseInt(this.answerElement.value, 10);
-
-      if (isNaN(userAnswer)) {
-          this.resultElement.textContent = 'Please enter a valid number.';
-      } else {
-          const correctAnswer = this.num1 + this.num2;
-
-          if (userAnswer === correctAnswer) {
-              this.resultElement.textContent = 'Correct!';
-          } else {
-              this.resultElement.textContent = `Incorrect. The correct answer is ${correctAnswer}.`;
-          }
-      }
-  }
+checkAnswer() {
+  this.correctAnswer = this.num1 + this.num2;
+  console.log(this.correctAnswer);
+  this.userAnswer = this.answerElement.value;
+  console.log(this.userAnswer);
+  if (Number(this.userAnswer) === Number(this.correctAnswer)) {
+    this.resultElement.textContent = `You are correct!`;
+  }else {
+    this.resultElement.textContent = `Incorrect. The correct answer is ${this.correctAnswer}.`;
+}
+}
 }
 
 const game = new AdditionGame();
 
-const check = document.getElementById('check-answer');
-// Add a click event listener to the button
-check.addEventListener('click', function () {
-  // Call the run method of your class
-  game.checkAnswer();
-});
-
-const next = document.getElementById('next-question');
-// Add a click event listener to the button
-next.addEventListener('click', function () {
-  // Call the run method of your class
+document.querySelector('#go').addEventListener('click', function() {
   game.generateQuestion();
-});
+})
+
+document.querySelector('#check-answer').addEventListener('click', function() {
+  game.checkAnswer();
+})
+
+document.querySelector('#answer').addEventListener('keyup', function(event) {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    document.querySelector('#check-answer').click();
+  }
+})
