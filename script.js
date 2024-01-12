@@ -1,3 +1,48 @@
+//Fix API to be functional in this code
+// document.querySelector('button').addEventListener('click', getFetch)
+
+function spriteFetch(){
+  // const choice = document.querySelector('input').value
+  // console.log(choice)
+  const url = `https://pokeapi.co/api/v2/pokemon/bulbasaur`
+
+  fetch(url)
+      .then(res => res.json()) // parse response as JSON
+      .then(data => {
+        console.log(data.sprites.front_default)
+
+        const imgUrls = [];
+        for(let i = 0; i < pokemonGame.num1; i++) {
+          imgUrls.push(data.sprites.front_default);
+        }
+
+        const spriteLeft = document.querySelector('#sprite-left')
+        for (let i = 0; i < imgUrls.length; i++) {
+          const img = document.createElement('img');
+          img.src = imgUrls[i];
+          spriteLeft.appendChild(img);
+        }
+        
+        const imageUrls = [];
+        for(let i = 0; i < pokemonGame.num2; i++) {
+          imageUrls.push(data.sprites.front_default);
+        }
+
+        const spriteRight = document.querySelector('#sprite-right')
+        for (let i = 0; i < imageUrls.length; i++) {
+          const img = document.createElement('img');
+          img.src = imageUrls[i];
+          spriteRight.appendChild(img);
+        }
+        
+       
+        // document.querySelector('h3').innerText = data.explanation
+      })
+      .catch(err => {
+          console.log(`error ${err}`)
+      });
+}
+
 class AdditionGame {
 constructor() {
   this.num1Element = document.querySelector('#first-number');
@@ -31,14 +76,17 @@ checkAnswer() {
 }
 }
 
-const game = new AdditionGame();
+const pokemonGame = new AdditionGame();
 
 document.querySelector('#go').addEventListener('click', function() {
-  game.generateQuestion();
+  pokemonGame.generateQuestion();
+  spriteFetch();
+  console.log(pokemonGame.num1)
 })
 
 document.querySelector('#check-answer').addEventListener('click', function() {
-  game.checkAnswer();
+  pokemonGame.checkAnswer();
+  // getFetch();
 })
 
 document.querySelector('#answer').addEventListener('keyup', function(event) {
@@ -47,31 +95,3 @@ document.querySelector('#answer').addEventListener('keyup', function(event) {
     document.querySelector('#check-answer').click();
   }
 })
-
-
-//Fix API to be functional in this code
-document.querySelector('button').addEventListener('click', getFetch)
-
-function getFetch(){
-  const choice = document.querySelector('input').value
-  console.log(choice)
-  const url = `www.themealdb.com/api/json/v1/1/filter.php?i=chicken_breast`
-
-  fetch(url)
-      .then(res => res.json()) // parse response as JSON
-      .then(data => {
-        console.log(data)
-        if(data.media_type === "image"){
-          document.querySelector('img').src = data.hdurl
-        }else if(data.media_type === 'video'){
-          document.querySelector('iframe').src = data.url
-        }else{
-          alert('Media Not Supported - Contact NASA IMMEDIATLY')
-        }
-       
-        document.querySelector('h3').innerText = data.explanation
-      })
-      .catch(err => {
-          console.log(`error ${err}`)
-      });
-}
