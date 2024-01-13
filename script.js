@@ -4,7 +4,7 @@
 function spriteFetch(){
   // const choice = document.querySelector('input').value
   // console.log(choice)
-  const url = `https://pokeapi.co/api/v2/pokemon/bulbasaur`
+  const url = `https://pokeapi.co/api/v2/pokemon/pikachu`
 
   fetch(url)
       .then(res => res.json()) // parse response as JSON
