@@ -57,8 +57,8 @@ class AdditionMathGame extends MathGame {
   generateQuestion() {
     this.reset();
 
-    this.num1 = Math.floor(Math.random() * 10);
-    this.num2 = Math.floor(Math.random() * 10);
+    this.num1 = Math.floor(Math.random() * 11);
+    this.num2 = Math.floor(Math.random() * 11);
   
     this.equationElement.textContent = `${this.num1} + ${this.num2} = `;
 
@@ -100,8 +100,8 @@ class SubtractionMathGame extends MathGame {
   generateQuestion() {
     this.reset();
 
-    this.num1 = Math.floor(Math.random() * 10);
-    this.num2 = Math.floor(Math.random() * 10);
+    this.num1 = Math.floor(Math.random() * 11);
+    this.num2 = Math.floor(Math.random() * 11);
 
     if(this.num1 > this.num2) {
     this.equationElement.textContent = `${this.num1} - ${this.num2} = `;
@@ -146,8 +146,8 @@ class MultiplicationMathGame extends MathGame {
   generateQuestion() {
     this.reset();
 
-    this.num1 = Math.floor(Math.random() * 12);
-    this.num2 = Math.floor(Math.random() * 12);
+    this.num1 = Math.floor(Math.random() * 13);
+    this.num2 = Math.floor(Math.random() * 13);
   
     this.equationElement.textContent = `${this.num1} x ${this.num2} = `;
 
@@ -187,12 +187,19 @@ class DivisionMathGame extends MathGame {
   generateQuestion() {
     this.reset();
 
-    this.num1 = Math.floor(Math.random() * 144);
-    this.num2 = Math.floor(Math.random() * 12);
+    this.num1 = Math.floor(Math.random() * 145);
+    this.num2 = Math.floor(Math.random() * 13);
 
-    if(this.num1 > this.num2 && this.num1 % this.num2 === 0) {
-    this.equationElement.textContent = `${this.num1} / ${this.num2} = `;
-    
+    if (this.num1 > this.num2 && this.num1 % this.num2 === 0) {
+      if (this.num1 <= 100 || (this.num2 === 11 || this.num2 === 12)) {
+        this.equationElement.textContent = `${this.num1} / ${this.num2} = `;
+      } else {
+        this.generateQuestion();
+      }
+    } else {
+      this.generateQuestion();
+    }
+
     this.answerElement.focus();
     this.answerElement.value = '';
     this.resultElement.textContent = '';
@@ -207,9 +214,7 @@ class DivisionMathGame extends MathGame {
         document.querySelector('#check-answer').click();
       }
     })
-    } else {
-      this.generateQuestion();
-    }
+    
   }
 
   checkAnswer() {
