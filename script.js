@@ -49,6 +49,13 @@ class MathGame {
    this.spriteLeft.innerHTML = '';
    this.spriteRight.innerHTML = '';
   }
+
+  winMultipicationOrDivision() {
+    let hockeyImg = document.createElement('img');
+    hockeyImg.src = "hockey-img.jpg";
+    document.getElementById('image-win-container').appendChild(hockeyImg);
+
+  }
 }
 
 // ADDITION GAME
