@@ -50,11 +50,26 @@ class MathGame {
    this.spriteRight.innerHTML = '';
   }
 
-  winMultipicationOrDivision() {
+  winMultiplicationOrDivision() {
+    const hockeyWinArray = [];
+
+    const imageWinContainer = document.getElementById('image-win-container');
+   
+    for (let i = 0; i < hockeyWinArray.length)
     let hockeyImg = document.createElement('img');
     hockeyImg.src = "hockey-img.jpg";
-    document.getElementById('image-win-container').appendChild(hockeyImg);
+    imageWinContainer.appendChild(hockeyImg);
 
+    const img1Urls = [];
+          for(let i = 0; i < this.num1; i++) {
+            img1Urls.push(data.sprites.front_default);
+          }
+  
+          for (let i = 0; i < img1Urls.length; i++) {
+            const img = document.createElement('img');
+            img.src = img1Urls[i];
+            this.spriteLeft.appendChild(img);
+          }
   }
 }
 
@@ -75,16 +90,6 @@ class AdditionMathGame extends MathGame {
 
     this.spriteFetch();
     
-    document.querySelector('#check-answer').addEventListener('click', function() {
-      game.checkAnswer();
-    })
-    
-    document.querySelector('#answer').addEventListener('keyup', function(event) {
-      if (event.keyCode === 13) {
-        event.preventDefault();
-        document.querySelector('#check-answer').click();
-      }
-    })
   }
 
   checkAnswer() {
@@ -119,16 +124,6 @@ class SubtractionMathGame extends MathGame {
 
     this.spriteFetch();
     
-    document.querySelector('#check-answer').addEventListener('click', function() {
-      game.checkAnswer();
-    })
-    
-    document.querySelector('#answer').addEventListener('keyup', function(event) {
-      if (event.keyCode === 13) {
-        event.preventDefault();
-        document.querySelector('#check-answer').click();
-      }
-    })
     } else {
       this.generateQuestion();
     }
@@ -161,17 +156,7 @@ class MultiplicationMathGame extends MathGame {
     this.answerElement.focus();
     this.answerElement.value = '';
     this.resultElement.textContent = '';
-    
-    document.querySelector('#check-answer').addEventListener('click', function() {
-      game.checkAnswer();
-    })
-    
-    document.querySelector('#answer').addEventListener('keyup', function(event) {
-      if (event.keyCode === 13) {
-        event.preventDefault();
-        document.querySelector('#check-answer').click();
-      }
-    })
+
   }
 
   checkAnswer() {
@@ -181,6 +166,7 @@ class MultiplicationMathGame extends MathGame {
       if (userAnswer === correctAnswer) {
           this.resultElement.textContent = `You are correct!
           You earn a character!`;
+          this.winMultiplicationOrDivision();
       } else {
           this.resultElement.textContent = `Incorrect. The correct answer is ${correctAnswer}.`;
       }
@@ -211,22 +197,11 @@ class DivisionMathGame extends MathGame {
     this.answerElement.value = '';
     this.resultElement.textContent = '';
     
-    document.querySelector('#check-answer').addEventListener('click', function() {
-      game.checkAnswer();
-    })
-    
-    document.querySelector('#answer').addEventListener('keyup', function(event) {
-      if (event.keyCode === 13) {
-        event.preventDefault();
-        document.querySelector('#check-answer').click();
-      }
-    })
-    
   }
 
   checkAnswer() {
       let userAnswer = parseInt(this.answerElement.value);
-      let correctAnswer = this.num1 - this.num2;
+      let correctAnswer = this.num1 / this.num2;
 
       if (userAnswer === correctAnswer) {
           this.resultElement.textContent = `You are correct!
@@ -237,21 +212,36 @@ class DivisionMathGame extends MathGame {
   }
 }
 
+//ADDITION SELECTION
+const nextButton = document.querySelector('#next');
+const addButton = document.querySelector('#add-button');
 
-
-document.querySelector('#add-button').addEventListener('click', function() {  
+addButton.addEventListener('click', function() {  
   const game = new AdditionMathGame();
   game.generateQuestion();
+  
+  
   document.querySelector('#check-answer').addEventListener('click', function() {
     game.checkAnswer();
+    nextButton.focus();
+
   });
+
   document.querySelector('#answer').addEventListener('keyup', function(event) {
     if (event.keyCode === 13) {
       event.preventDefault();
       document.querySelector('#check-answer').click();
+      nextButton.focus();
     }
   })
+
+  nextButton.addEventListener('keyup', function () {
+    addButton.click();
+    this.answerElement.focus();
+  })
 })
+
+// SUBTRACTION SELECTION
 
 document.querySelector('#subtract-button').addEventListener('click', function() {  
   const game = new SubtractionMathGame();
@@ -267,6 +257,8 @@ document.querySelector('#subtract-button').addEventListener('click', function() 
   })
 })
 
+//MULTIPLICATION SELECTION
+
 document.querySelector('#multiply-button').addEventListener('click', function() { 
   const game = new MultiplicationMathGame();
   game.generateQuestion();
@@ -280,6 +272,8 @@ document.querySelector('#multiply-button').addEventListener('click', function() 
     }
   })
 })
+
+//DIVISION SELECTION
 
 document.querySelector('#divide-button').addEventListener('click', function() {  
   const game = new DivisionMathGame();
