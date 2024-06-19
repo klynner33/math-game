@@ -1,19 +1,24 @@
 class MathGame {
+  static correctAnswers = 0;
+
   constructor() {
     this.equationElement = document.querySelector('#equation');
     this.answerElement = document.querySelector('#answer');
     this.resultElement = document.querySelector('#result');
     this.spriteLeft = document.querySelector('#sprite-left');
     this.spriteRight = document.querySelector('#sprite-right');
+    this.newGameButton = document.querySelector('#new-game');
+    this.imageWinContainer = document.querySelector('#image-win-container');
+    // this.correctAnswers = 0;
+
+    this.newGameButton.addEventListener('click', () => this.resetGame());
   }
   
   spriteFetch(){
-    // const choice = document.querySelector('input').value
-    // console.log(choice)
     const url = `https://pokeapi.co/api/v2/pokemon/pikachu`
   
     fetch(url)
-        .then(res => res.json()) // parse response as JSON
+        .then(res => res.json())
         .then(data => {
           console.log(data.sprites.front_default)
   
@@ -41,7 +46,7 @@ class MathGame {
           
         })
         .catch(err => {
-            console.log(`error ${err}`)
+            console.log(`error ${err}`);
         });
   }
 
@@ -50,26 +55,52 @@ class MathGame {
    this.spriteRight.innerHTML = '';
   }
 
-  winMultiplicationOrDivision() {
-    const hockeyWinArray = [];
+  resetGame() {
+    MathGame.correctAnswers = 0;
+    this.imageWinContainer.innerHTML = '';
+    this.resultElement.textContent = '';
+    this.equationElement.textContent = '';
+    this.answerElement.value = '';
+    this.spriteLeft.innerHTML = '';
+    this.spriteRight.innerHTML = '';
+    this.newGameButton.style.display = 'none';
+  }
 
-    const imageWinContainer = document.getElementById('image-win-container');
-   
-    for (let i = 0; i < hockeyWinArray.length)
-    let hockeyImg = document.createElement('img');
+  addPokemonImage() {
+    if (MathGame.correctAnswers <= 10) {
+    const randomPokemonId = Math.floor(Math.random() * 898) + 1;
+
+    const url = `https://pokeapi.co/api/v2/pokemon/${randomPokemonId}`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        const pokemonImg = document.createElement('img');
+        pokemonImg.src = data.sprites.front_default;
+        pokemonImg.classList.add('pokemon-img');
+        this.imageWinContainer.appendChild(pokemonImg);
+      })
+      .catch(err => {
+        console.log(`error ${err}`);
+      });
+    }
+  }
+
+  addHockeyImage() {
+    if (MathGame.correctAnswers <= 10) {
+    const hockeyImg = document.createElement('img');
+    hockeyImg.classList.add('hockey-img');
     hockeyImg.src = "hockey-img.jpg";
-    imageWinContainer.appendChild(hockeyImg);
+    this.imageWinContainer.appendChild(hockeyImg);
+    }
+  }
 
-    const img1Urls = [];
-          for(let i = 0; i < this.num1; i++) {
-            img1Urls.push(data.sprites.front_default);
-          }
-  
-          for (let i = 0; i < img1Urls.length; i++) {
-            const img = document.createElement('img');
-            img.src = img1Urls[i];
-            this.spriteLeft.appendChild(img);
-          }
+  checkWinCondition() {
+    if (MathGame.correctAnswers >= 10) {
+      this.newGameButton.style.display = 'inline';
+      this.resultElement.textContent = `You win!`;
+    }
+    console.log(MathGame.correctAnswers);
   }
 }
 
@@ -97,8 +128,10 @@ class AdditionMathGame extends MathGame {
       let correctAnswer = this.num1 + this.num2;
 
       if (userAnswer === correctAnswer) {
-          this.resultElement.textContent = `You are correct!
-          You earn a character!`;
+          this.resultElement.textContent = `You are correct! You earn a character!`;
+          MathGame.correctAnswers += 1;
+          this.addPokemonImage();
+          this.checkWinCondition();
       } else {
           this.resultElement.textContent = `Incorrect. The correct answer is ${correctAnswer}.`;
       }
@@ -136,6 +169,9 @@ class SubtractionMathGame extends MathGame {
       if (userAnswer === correctAnswer) {
           this.resultElement.textContent = `You are correct!
           You earn a character!`;
+          MathGame.correctAnswers += 1;
+          this.addPokemonImage();
+          this.checkWinCondition();
       } else {
           this.resultElement.textContent = `Incorrect. The correct answer is ${correctAnswer}.`;
       }
@@ -166,7 +202,9 @@ class MultiplicationMathGame extends MathGame {
       if (userAnswer === correctAnswer) {
           this.resultElement.textContent = `You are correct!
           You earn a character!`;
-          this.winMultiplicationOrDivision();
+          MathGame.correctAnswers += 1;
+          this.addHockeyImage();
+          this.checkWinCondition();
       } else {
           this.resultElement.textContent = `Incorrect. The correct answer is ${correctAnswer}.`;
       }
@@ -206,85 +244,57 @@ class DivisionMathGame extends MathGame {
       if (userAnswer === correctAnswer) {
           this.resultElement.textContent = `You are correct!
           You earn a character!`;
+          MathGame.correctAnswers += 1;
+          this.addHockeyImage();
+          this.checkWinCondition();
       } else {
           this.resultElement.textContent = `Incorrect. The correct answer is ${correctAnswer}.`;
       }
   }
 }
 
-//ADDITION SELECTION
-const nextButton = document.querySelector('#next');
+let currentGame = null;
+
 const addButton = document.querySelector('#add-button');
+const subtractButton = document.querySelector('#subtract-button');
+const multiplyButton = document.querySelector('#multiply-button');
+const divideButton = document.querySelector('#divide-button');
+const checkAnswerButton = document.querySelector('#check-answer');
+const answerInput = document.querySelector('#answer');
 
-addButton.addEventListener('click', function() {  
-  const game = new AdditionMathGame();
-  game.generateQuestion();
-  
-  
-  document.querySelector('#check-answer').addEventListener('click', function() {
-    game.checkAnswer();
-    nextButton.focus();
+// Common function to start a new game
+function startGame(GameClass) {
+  currentGame = new GameClass();
+  currentGame.generateQuestion();
+}
 
-  });
+// Event listeners for starting new games
+addButton.addEventListener('click', function() {
+  startGame(AdditionMathGame);
+});
 
-  document.querySelector('#answer').addEventListener('keyup', function(event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      document.querySelector('#check-answer').click();
-      nextButton.focus();
-    }
-  })
+subtractButton.addEventListener('click', function() {
+  startGame(SubtractionMathGame);
+});
 
-  nextButton.addEventListener('keyup', function () {
-    addButton.click();
-    this.answerElement.focus();
-  })
-})
+multiplyButton.addEventListener('click', function() {
+  startGame(MultiplicationMathGame);
+});
 
-// SUBTRACTION SELECTION
+divideButton.addEventListener('click', function() {
+  startGame(DivisionMathGame);
+});
 
-document.querySelector('#subtract-button').addEventListener('click', function() {  
-  const game = new SubtractionMathGame();
-  game.generateQuestion();
-  document.querySelector('#check-answer').addEventListener('click', function() {
-    game.checkAnswer();
-  });
-  document.querySelector('#answer').addEventListener('keyup', function(event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      document.querySelector('#check-answer').click();
-    }
-  })
-})
+// Single event listener for checking the answer
+checkAnswerButton.addEventListener('click', function() {
+  if (currentGame) {
+    currentGame.checkAnswer();
+  }
+});
 
-//MULTIPLICATION SELECTION
-
-document.querySelector('#multiply-button').addEventListener('click', function() { 
-  const game = new MultiplicationMathGame();
-  game.generateQuestion();
-  document.querySelector('#check-answer').addEventListener('click', function() {
-    game.checkAnswer();
-  });
-  document.querySelector('#answer').addEventListener('keyup', function(event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      document.querySelector('#check-answer').click();
-    }
-  })
-})
-
-//DIVISION SELECTION
-
-document.querySelector('#divide-button').addEventListener('click', function() {  
-  const game = new DivisionMathGame();
-  game.generateQuestion();
-  document.querySelector('#check-answer').addEventListener('click', function() {
-    game.checkAnswer();
-  });
-  document.querySelector('#answer').addEventListener('keyup', function(event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      document.querySelector('#check-answer').click();
-    }
-  })
-})
+answerInput.addEventListener('keyup', function(event) {
+  if (event.keyCode === 13 && currentGame) {
+    event.preventDefault();
+    currentGame.checkAnswer();
+  }
+});
